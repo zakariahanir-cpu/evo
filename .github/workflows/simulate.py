@@ -1,0 +1,39 @@
+name: Evolve World
+
+on:
+  workflow_dispatch: {}     # تشغيل يدوي من تبويب Actions
+  schedule:
+    - cron: "0 */6 * * *"    # تشغيل تلقائي كل 6 ساعات (اختياري، عدّله أو احذفه)
+
+permissions:
+  contents: write            # مطلوب عشان يقدر يعمل commit للحالة والتقارير
+
+concurrency:
+  group: evolve-world
+  cancel-in-progress: false  # ما نبي تشغيلتين يتصادمون على نفس ملف الحالة
+
+jobs:
+  run-generations:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Run 10 generations
+        env:
+          GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
+        run: python main.py --generations 10
+
+      - name: Commit and push updated state and reports
+        uses: stefanzweifel/git-auto-commit-action@v5
+        with:
+          commit_message: "🧬 تطور العالم: أجيال جديدة"
+          file_pattern: "state/* reports/*"
