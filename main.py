@@ -34,7 +34,7 @@ def append_report(stats, summary):
 
 def main():
     parser = argparse.ArgumentParser()
-    parser.add_argument("--generations", type=int, default=10000)
+    parser.add_argument("--generations", type=int, default=1000000)
     parser.add_argument("--ticks", type=int, default=None,
                          help="عدد النبضات لكل جيل (للاختبار السريع)")
     parser.add_argument("--seed", type=int, default=42)
